@@ -9,7 +9,7 @@ template '/etc/elasticsearch/elasticsearch.yml' do
   owner 'root'
   group 'elasticsearch'
   mode 0660
-  notifies :restart, 'service[elasticsearch]'
+  notifies :restart, 'service[elasticsearch]', :delayed
   variables(
     :hostname => node[:hostname],
   )
@@ -20,7 +20,7 @@ template '/etc/elasticsearch/jvm.options' do
   owner 'root'
   group 'elasticsearch'
   mode 0660
-  notifies :restart, 'service[elasticsearch]'
+  notifies :restart, 'service[elasticsearch]', :delayed
 end
 
 append_if_no_line 'set maximum number of open files' do
@@ -42,23 +42,27 @@ directory '/etc/systemd/system/elasticsearch.service.d' do
   action :create
 end
 
+execute 'systemctl_daemon-reload' do
+  command '/bin/systemctl daemon-reload'
+  action :nothing
+end
+
 template '/etc/systemd/system/elasticsearch.service.d/override.conf' do
   source 'override.conf.erb'
   owner 'root'
   group 'elasticsearch'
   mode 0660
-  notifies :restart, 'service[elasticsearch]'
+  notifies :run, 'execute[systemctl_daemon-reload]', :immediately
+  notifies :restart, 'service[elasticsearch]', :delayed
 end
 
-execute 'systemctl daemon-reload' do
-  command '/bin/systemctl daemon-reload'
+execute 'sysctl_vm.swappiness' do
+  command '/sbin/sysctl vm.swappiness=1'
+  action :nothing
 end
 
 append_if_no_line 'set swappiness' do
   path '/etc/sysctl.conf'
   line 'vm.swappiness=1'
-end
-
-execute 'sysctl vm.swappiness' do
-  command '/sbin/sysctl vm.swappiness=1'
+  notifies :run, 'execute[sysctl_vm.swappiness]', :immediately
 end

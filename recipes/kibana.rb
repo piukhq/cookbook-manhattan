@@ -9,5 +9,5 @@ template '/etc/kibana/kibana.yml' do
   owner 'root'
   group 'root'
   mode 0644
-  notifies :restart, 'service[kibana]'
+  notifies :restart, 'service[kibana]', :delayed
 end
