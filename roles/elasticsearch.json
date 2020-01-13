@@ -4,7 +4,6 @@
   "json_class": "Chef::Role",
   "description": "Deploys an Elasticsearch Server",
   "run_list": [
-    "recipe[manhattan::default]",
-    "recipe[manhattan::elasticsearch]"
+    "recipe[manhattan]"
   ]
 }
