@@ -4,7 +4,6 @@
   "json_class": "Chef::Role",
   "description": "Deploys a Kibana Server",
   "run_list": [
-    "recipe[manhattan::default]",
-    "recipe[manhattan::kibana]"
+    "recipe[manhattan]"
   ]
 }

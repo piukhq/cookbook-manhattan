@@ -21,3 +21,11 @@ if node.chef_environment == 'vagrant'
     )
   end
 end
+
+if node.role?('elasticsearch')
+  include_recipe 'manhattan::elasticsearch'
+end
+
+if node.role?('kibana')
+  include_recipe 'manhattan::kibana'
+end
