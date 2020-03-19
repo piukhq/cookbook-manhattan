@@ -8,6 +8,6 @@ DEPENDENCIES
 GRAPH
   apt (7.0.0)
   line (2.0.2)
-  manhattan (1.0.0)
+  manhattan (1.0.1)
     apt (>= 0.0.0)
     line (>= 0.0.0)
