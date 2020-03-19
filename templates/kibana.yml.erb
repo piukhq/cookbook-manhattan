@@ -22,10 +22,10 @@ server.host: "0.0.0.0"
 #server.maxPayloadBytes: 1048576
 
 # The Kibana server's name.  This is used for display purposes.
-server.name: "elasticsearch"
+server.name: "monitoring-kibana"
 
 # The URLs of the Elasticsearch instances to use for all your queries.
-elasticsearch.hosts: ["http://elasticsearch-1:9200", "http://elasticsearch-2:9200", "http://elasticsearch-3:9200"]
+elasticsearch.hosts: ["http://monitoring-elasticsearch-01:9200", "http://monitoring-elasticsearch-02:9200", "http://monitoring-elasticsearch-03:9200"]
 
 # When this setting's value is true Kibana uses the hostname specified in the server.host
 # setting. When the value of this setting is false, Kibana uses the hostname of the host
