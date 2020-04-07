@@ -15,6 +15,22 @@ template '/etc/elasticsearch/elasticsearch.yml' do
   )
 end
 
+directory '/etc/elasticsearch/certs' do
+  owner 'root'
+  group 'elasticsearch'
+  mode '0755'
+end
+
+certificates = data_bag_item(node.chef_environment, 'certificates')
+
+file '/etc/elasticsearch/certs/elasticsearch.uksouth.bink.sh' do
+  content Base64.decode64(certificates[:'elasticsearch.uksouth.bink.sh'])
+  owner 'root'
+  group 'elasticsearch'
+  mode '0640'
+  sensitive true
+end
+
 template '/etc/elasticsearch/jvm.options' do
   source 'jvm.options.erb'
   owner 'root'

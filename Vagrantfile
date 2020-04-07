@@ -15,6 +15,8 @@ Vagrant.configure('2') do |v|
         c.add_role('elasticsearch')
         c.environments_path = 'environments'
         c.environment = 'vagrant'
+        c.data_bags_path = 'data_bags'
+        c.encrypted_data_bag_secret_key_path = './Vagrant_data_bag_secret'
       end
     end
   end
@@ -29,6 +31,8 @@ Vagrant.configure('2') do |v|
       c.add_role('kibana')
       c.environments_path = 'environments'
       c.environment = 'vagrant'
+      c.data_bags_path = 'data_bags'
+      c.encrypted_data_bag_secret_key_path = './Vagrant_data_bag_secret'
     end
   end
 end
