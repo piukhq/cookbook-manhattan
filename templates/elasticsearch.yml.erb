@@ -86,3 +86,31 @@ cluster.initial_master_nodes: ["monitoring-elasticsearch-01", "monitoring-elasti
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true
+#
+# ---------------------------------- Security ----------------------------------
+#
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.keystore.path: certs/elasticsearch.uksouth.bink.sh
+xpack.security.transport.ssl.truststore.path: certs/elasticsearch.uksouth.bink.sh
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.verification_mode: certificate
+xpack.security.http.ssl.keystore.path: certs/elasticsearch.uksouth.bink.sh
+xpack.security.http.ssl.truststore.path: certs/elasticsearch.uksouth.bink.sh
+#
+# ---------------------------------- SSO SAML ----------------------------------
+#
+#xpack.security.authc.token.enabled: true
+#xpack.security.authc.realms:
+#  saml.saml1:
+#    order: 2
+#    idp.metadata.path: saml/Elasticsearch.xml
+#    idp.entity_id: "https://sts.windows.net/a6e2367a-92ea-4e5a-b565-723830bcc095/"
+#    sp.entity_id:  "https://kibana.gb.bink.com/"
+#    sp.acs: "https://kibana.gb.bink.com/api/security/saml"
+#    #sp.acs: "https://kibana.gb.bink.com/api/security/v1/saml"
+#    sp.logout: "https://kibana.gb.bink.com/logout"
+#    attributes.principal: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+#    attributes.mail: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+#    #attributes.groups: "urn:oid:1.3.6.1.4.1.5923.1.5.1."
