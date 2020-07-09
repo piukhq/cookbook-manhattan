@@ -11,7 +11,8 @@ template '/etc/elasticsearch/elasticsearch.yml' do
   mode '0660'
   notifies :restart, 'service[elasticsearch]', :delayed
   variables(
-    hostname: node['hostname']
+    hostname: node['hostname'],
+    nodes: node['elasticsearch']['nodes']
   )
 end
 
@@ -37,6 +38,9 @@ template '/etc/elasticsearch/jvm.options' do
   group 'elasticsearch'
   mode '0660'
   notifies :restart, 'service[elasticsearch]', :delayed
+  variables(
+    heapsize: node['elasticsearch']['heapsize']
+  )
 end
 
 append_if_no_line 'set maximum number of open files' do
@@ -63,11 +67,12 @@ execute 'systemctl_daemon-reload' do
   action :nothing
 end
 
-template '/etc/systemd/system/elasticsearch.service.d/override.conf' do
-  source 'override.conf.erb'
+cookbook_file '/etc/systemd/system/elasticsearch.service.d/override.conf' do
+  source 'override.conf'
   owner 'root'
   group 'elasticsearch'
   mode '0660'
+  action :create
   notifies :run, 'execute[systemctl_daemon-reload]', :immediately
   notifies :restart, 'service[elasticsearch]', :delayed
 end

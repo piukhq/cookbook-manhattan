@@ -8,17 +8,12 @@ apt_repository 'elasticsearch' do
 end
 
 if node.chef_environment == 'vagrant'
-  hosts = search(:node, '*:*')
-  template '/etc/hosts' do
-    source 'hosts.erb'
+  cookbook_file '/etc/hosts' do
+    source 'hosts'
     owner 'root'
     group 'root'
     mode '0644'
-    variables(
-      hosts: hosts,
-      hostname: node['hostname'],
-      fqdn: node['fqdn']
-    )
+    action :create
   end
 end
 

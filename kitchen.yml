@@ -1,0 +1,29 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
+  product_version: 15.9.17
+  chef_license: accept-no-persist
+  solo_rb:
+    environment: vagrant
+
+platforms:
+- name: bento/ubuntu-18.04
+  driver:
+    vm_hostname: monitoring-elasticsearch-01
+    customize:
+      memory: 3072
+
+verifier:
+  name: inspec
+
+suites:
+- name: monitoring-elasticsearch-01
+  run_list:
+  - role[elasticsearch]
+  - role[kibana]
+  verifier:
+    inspec_tests:
+    - test/integration/default

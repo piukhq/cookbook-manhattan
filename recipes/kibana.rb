@@ -10,6 +10,9 @@ template '/etc/kibana/kibana.yml' do
   group 'root'
   mode '0644'
   notifies :restart, 'service[kibana]', :delayed
+  variables(
+    es_nodes: node['kibana']['es_nodes']
+  )
 end
 
 directory '/etc/kibana/certs' do
