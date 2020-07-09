@@ -1,0 +1,8 @@
+stages:
+  - tests
+
+cookstyle:
+  stage: tests
+  image: chef/chefdk:latest
+  script:
+    - cookstyle

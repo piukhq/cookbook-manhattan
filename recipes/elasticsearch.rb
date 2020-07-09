@@ -8,10 +8,10 @@ template '/etc/elasticsearch/elasticsearch.yml' do
   source 'elasticsearch.yml.erb'
   owner 'root'
   group 'elasticsearch'
-  mode 0660
+  mode '0660'
   notifies :restart, 'service[elasticsearch]', :delayed
   variables(
-    :hostname => node[:hostname],
+    hostname: node['hostname']
   )
 end
 
@@ -35,7 +35,7 @@ template '/etc/elasticsearch/jvm.options' do
   source 'jvm.options.erb'
   owner 'root'
   group 'elasticsearch'
-  mode 0660
+  mode '0660'
   notifies :restart, 'service[elasticsearch]', :delayed
 end
 
@@ -67,7 +67,7 @@ template '/etc/systemd/system/elasticsearch.service.d/override.conf' do
   source 'override.conf.erb'
   owner 'root'
   group 'elasticsearch'
-  mode 0660
+  mode '0660'
   notifies :run, 'execute[systemctl_daemon-reload]', :immediately
   notifies :restart, 'service[elasticsearch]', :delayed
 end
