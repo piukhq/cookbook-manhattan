@@ -1,0 +1,30 @@
+_meta:
+  type: "config"
+  config_version: 2
+
+config:
+  dynamic:
+    authc:
+      basic_internal_auth_domain:
+        http_enabled: true
+        transport_enabled: true
+        order: 0
+        http_authenticator:
+          type: basic
+          challenge: false
+        authentication_backend:
+          type: internal
+      
+      openid_auth_domain:
+        http_enabled: true
+        transport_enabled: true
+        order: 1
+        http_authenticator:
+          type: openid
+          challenge: false
+          config:
+            subject_key: preferred_username
+            roles_key: roles
+            openid_connect_url: https://login.microsoftonline.com/a6e2367a-92ea-4e5a-b565-723830bcc095/v2.0/.well-known/openid-configuration
+        authentication_backend:
+          type: noop

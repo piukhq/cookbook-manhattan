@@ -1,8 +1,30 @@
 stages:
   - tests
+  - docs
+  - publish
 
 cookstyle:
   stage: tests
   image: chef/chefdk:latest
   script:
     - cookstyle
+
+readmeupload:
+  stage: docs
+  image: terrycain/markdown2confluence
+  script:
+    - markdown2confluence --base-url https://hellobink.atlassian.net --default-space INFRA --default-ancestor 811827556 README.md
+  only:
+    - master
+
+berksupload:
+  stage: publish
+  image: chef/chefdk:latest
+  script:
+    - mkdir ~/.chef
+    - echo -e "current_dir = File.dirname(__FILE__)\nlog_level :info\nlog_location STDOUT\nnode_name \"$CHEF_USER\"\nclient_key \"#{current_dir}/user.pem\"\nchef_server_url \"$CHEF_URL\"\ncookbook_path [\"#{current_dir}/../cookbooks\"]" > ~/.chef/knife.rb
+    - echo "$CHEF_PEM" > ~/.chef/user.pem
+    - berks install
+    - berks upload
+  only:
+    - tags

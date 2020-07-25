@@ -1,9 +1,18 @@
+# Install Java11
+
+apt_repository 'openjdk' do
+  uri 'ppa:openjdk-r/ppa'
+end
+
+package 'openjdk-11-jdk'
+package 'unzip'
+
 apt_repository 'elasticsearch' do
-  uri 'https://artifacts.elastic.co/packages/7.x/apt'
+  arch 'amd64'
+  uri 'https://d3g5vo6xdbdb9a.cloudfront.net/apt'
   components ['main']
   distribution 'stable'
-  key 'https://artifacts.elastic.co/GPG-KEY-elasticsearch'
-  action :add
+  key 'https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch'
   deb_src false
 end
 

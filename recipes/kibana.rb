@@ -1,4 +1,4 @@
-package 'kibana'
+package 'opendistroforelasticsearch-kibana'
 
 service 'kibana' do
   action :enable
@@ -11,20 +11,8 @@ template '/etc/kibana/kibana.yml' do
   mode '0644'
   notifies :restart, 'service[kibana]', :delayed
   variables(
-    es_nodes: node['kibana']['es_nodes']
+    es_loadbalancer: node['kibana']['es_loadbalancer'],
+    external_url: node['kibana']['external_url']
   )
-end
-
-directory '/etc/kibana/certs' do
-  owner 'root'
-  group 'root'
-  mode '0755'
-end
-
-certificates = data_bag_item(node.chef_environment, 'certificates')
-
-file '/etc/kibana/certs/ca.pem' do
-  content Base64.decode64(certificates[:'ca.pem'])
-  mode '0644'
   sensitive true
 end
