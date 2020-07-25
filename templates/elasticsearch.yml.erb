@@ -14,7 +14,7 @@
 #
 # Use a descriptive name for your cluster:
 #
-cluster.name: efk
+# cluster.name: efk
 #
 # ------------------------------------ Node ------------------------------------
 #
@@ -52,7 +52,8 @@ bootstrap.memory_lock: true
 #
 # Set the bind address to a specific IP (IPv4 or IPv6):
 #
-network.host: <%= @hostname %>
+# network.host: <%= @hostname %>
+network.host: 0.0.0.0
 #
 # Set a custom port for HTTP:
 #
@@ -88,29 +89,28 @@ cluster.initial_master_nodes: <%= Chef::JSONCompat.to_json(@nodes) %>
 #action.destructive_requires_name: true
 #
 # ---------------------------------- Security ----------------------------------
-#
-xpack.security.enabled: true
-xpack.security.transport.ssl.enabled: true
-xpack.security.transport.ssl.verification_mode: certificate
-xpack.security.transport.ssl.keystore.path: certs/elasticsearch.uksouth.bink.sh
-xpack.security.transport.ssl.truststore.path: certs/elasticsearch.uksouth.bink.sh
-xpack.security.http.ssl.enabled: true
-xpack.security.http.ssl.verification_mode: certificate
-xpack.security.http.ssl.keystore.path: certs/elasticsearch.uksouth.bink.sh
-xpack.security.http.ssl.truststore.path: certs/elasticsearch.uksouth.bink.sh
-#
-# ---------------------------------- SSO SAML ----------------------------------
-#
-#xpack.security.authc.token.enabled: true
-#xpack.security.authc.realms:
-#  saml.saml1:
-#    order: 2
-#    idp.metadata.path: saml/Elasticsearch.xml
-#    idp.entity_id: "https://sts.windows.net/a6e2367a-92ea-4e5a-b565-723830bcc095/"
-#    sp.entity_id:  "https://kibana.gb.bink.com/"
-#    sp.acs: "https://kibana.gb.bink.com/api/security/saml"
-#    #sp.acs: "https://kibana.gb.bink.com/api/security/v1/saml"
-#    sp.logout: "https://kibana.gb.bink.com/logout"
-#    attributes.principal: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-#    attributes.mail: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-#    #attributes.groups: "urn:oid:1.3.6.1.4.1.5923.1.5.1."
+
+opendistro_security.ssl.transport.pemcert_filepath: certs/node.pem
+opendistro_security.ssl.transport.pemkey_filepath: certs/node-key.pem
+opendistro_security.ssl.transport.pemtrustedcas_filepath: certs/ca.pem
+opendistro_security.ssl.transport.enforce_hostname_verification: false
+opendistro_security.ssl.http.enabled: true
+opendistro_security.ssl.http.pemcert_filepath: certs/node.pem
+opendistro_security.ssl.http.pemkey_filepath: certs/node-key.pem
+opendistro_security.ssl.http.pemtrustedcas_filepath: certs/ca.pem
+opendistro_security.allow_unsafe_democertificates: false
+opendistro_security.allow_default_init_securityindex: true
+opendistro_security.authcz.admin_dn:
+ - CN=elasticsearch-admin,OU=DevOps,O=Bink,L=Ascot,ST=Berkshire,C=GB
+
+opendistro_security.audit.type: internal_elasticsearch
+opendistro_security.enable_snapshot_restore_privilege: true
+opendistro_security.check_snapshot_restore_write_privileges: true
+opendistro_security.restapi.roles_enabled: ["all_access", "security_rest_api_access"]
+cluster.routing.allocation.disk.threshold_enabled: false
+# node.max_local_storage_nodes: 3
+# opendistro_security.ssl.http.enabled_ciphers:
+#   - "TLS_DHE_RSA_WITH_AES_256_CBC_SHA"
+#   - "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256"
+opendistro_security.ssl.http.enabled_protocols:
+  - "TLSv1.2"

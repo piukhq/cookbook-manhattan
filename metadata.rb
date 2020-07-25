@@ -1,5 +1,5 @@
 name 'manhattan'
 description 'Deploys Elasticsearch and Kibana'
-version '1.0.4'
+version '2.0.0'
 
 depends 'line'

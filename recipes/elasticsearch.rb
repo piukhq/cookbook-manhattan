@@ -1,4 +1,33 @@
-package 'elasticsearch'
+# Todo update so we do this block on a version update
+unless node['packages'].keys.include?('elasticsearch-oss')
+  es_path = Chef::Config[:file_cache_path] + '/elasticsearch.deb'
+
+  remote_file 'elasticsearch_deb' do
+    source node['elasticsearch']['oss_url']
+    owner 'root'
+    group 'root'
+    mode '0644'
+    path es_path
+  end
+
+  dpkg_package 'elasticsearch' do
+    source es_path
+  end
+
+  file 'elasticsearch_deb' do
+    path es_path
+    action :delete
+  end
+end
+
+package 'opendistroforelasticsearch'
+
+execute 'update_elastic_security' do
+  command '/usr/share/elasticsearch/plugins/opendistro_security/tools/securityadmin.sh -cacert /etc/elasticsearch/certs/ca.pem -cert /root/.es/admin.pem -key /root/.es/admin-key.pem -cd /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/ -nhnv'
+  action :nothing
+  retry_delay 30
+  retries 3
+end
 
 service 'elasticsearch' do
   action :enable
@@ -16,20 +45,60 @@ template '/etc/elasticsearch/elasticsearch.yml' do
   )
 end
 
+certificates = data_bag_item(node.chef_environment, 'certificates')
+
 directory '/etc/elasticsearch/certs' do
   owner 'root'
   group 'elasticsearch'
-  mode '0755'
+  mode '0750'
 end
 
-certificates = data_bag_item(node.chef_environment, 'certificates')
-
-file '/etc/elasticsearch/certs/elasticsearch.uksouth.bink.sh' do
-  content Base64.decode64(certificates[:'elasticsearch.uksouth.bink.sh'])
+file '/etc/elasticsearch/certs/ca.pem' do
+  content Base64.decode64(certificates['ca_cert'])
+  owner 'root'
+  group 'elasticsearch'
+  mode '0640'
+  notifies :restart, 'service[elasticsearch]', :delayed
+end
+file '/etc/elasticsearch/certs/node.pem' do
+  content Base64.decode64(certificates['node_cert'])
+  owner 'root'
+  group 'elasticsearch'
+  mode '0640'
+  notifies :restart, 'service[elasticsearch]', :delayed
+end
+file '/etc/elasticsearch/certs/node-key.pem' do
+  content Base64.decode64(certificates['node_key'])
   owner 'root'
   group 'elasticsearch'
   mode '0640'
   sensitive true
+  notifies :restart, 'service[elasticsearch]', :delayed
+end
+
+directory '/root/.es' do
+  owner 'root'
+  group 'root'
+  mode '0750'
+end
+file '/root/.es/admin.pem' do
+  content Base64.decode64(certificates['admin_cert'])
+  owner 'root'
+  group 'root'
+  mode '0600'
+end
+file '/root/.es/admin-key.pem' do
+  content Base64.decode64(certificates['admin_key'])
+  owner 'root'
+  group 'root'
+  mode '0600'
+  sensitive true
+end
+
+%w(esnode-key.pem esnode.pem kirk-key.pem kirk.pem root-ca.pem).each do |f|
+  file "/etc/elasticsearch/#{f}" do
+    action :delete
+  end
 end
 
 template '/etc/elasticsearch/jvm.options' do
@@ -86,4 +155,14 @@ append_if_no_line 'set swappiness' do
   path '/etc/sysctl.conf'
   line 'vm.swappiness=1'
   notifies :run, 'execute[sysctl_vm.swappiness]', :immediately
+end
+
+%w(config.yml internal_users.yml roles.yml roles_mapping.yml).each do |f|
+  cookbook_file "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/#{f}" do
+    source "elastic_security/#{f}"
+    owner 'root'
+    group 'elasticsearch'
+    mode '0640'
+    notifies :run, 'execute[update_elastic_security]', :delayed
+  end
 end

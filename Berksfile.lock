@@ -6,5 +6,5 @@ DEPENDENCIES
 
 GRAPH
   line (2.9.0)
-  manhattan (1.0.4)
+  manhattan (2.0.0)
     line (>= 0.0.0)
