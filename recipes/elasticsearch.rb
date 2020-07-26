@@ -163,6 +163,6 @@ end
     owner 'root'
     group 'elasticsearch'
     mode '0640'
-    notifies :run, 'execute[update_elastic_security]', :delayed
+    # notifies :run, 'execute[update_elastic_security]', :delayed
   end
 end
