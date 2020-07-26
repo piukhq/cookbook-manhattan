@@ -10,6 +10,7 @@ unless node['packages'].keys.include?('elasticsearch-oss')
     path es_path
   end
 
+  # Install official elasticsearch server
   dpkg_package 'elasticsearch' do
     source es_path
   end
@@ -20,8 +21,10 @@ unless node['packages'].keys.include?('elasticsearch-oss')
   end
 end
 
+# Install opendistro elasticsearch plugins
 package 'opendistroforelasticsearch'
 
+# Stored for reference, executing it during chef run is unreliable
 execute 'update_elastic_security' do
   command '/usr/share/elasticsearch/plugins/opendistro_security/tools/securityadmin.sh -cacert /etc/elasticsearch/certs/ca.pem -cert /root/.es/admin.pem -key /root/.es/admin-key.pem -cd /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/ -nhnv'
   action :nothing
@@ -95,6 +98,7 @@ file '/root/.es/admin-key.pem' do
   sensitive true
 end
 
+# Remove opendistro demo files
 %w(esnode-key.pem esnode.pem kirk-key.pem kirk.pem root-ca.pem).each do |f|
   file "/etc/elasticsearch/#{f}" do
     action :delete

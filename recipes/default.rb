@@ -7,6 +7,7 @@ end
 package 'openjdk-11-jdk'
 package 'unzip'
 
+# Install opendistro repo
 apt_repository 'elasticsearch' do
   arch 'amd64'
   uri 'https://d3g5vo6xdbdb9a.cloudfront.net/apt'

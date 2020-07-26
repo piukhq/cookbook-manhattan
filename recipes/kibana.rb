@@ -1,3 +1,4 @@
+# NOTE: only used during vagrant
 package 'opendistroforelasticsearch-kibana'
 
 service 'kibana' do
